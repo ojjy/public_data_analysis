@@ -12,7 +12,6 @@ from pathlib import Path
 app = Flask(__name__)
 # 애초에 주소 리스트를 생성하여 주소 찍을때 이 리스트를 넘겨 한번만 콜하여 지도에 찍는 방법이 있는지 강구.
 def get_apikey(key_name, json_filename='secret.json'):
-    print("get_apikey call")
     # 해당 py파일의 속해 있는 폴더가 base_dir
     BASE_DIR = Path(__file__).resolve().parent # == os.path.dirname(os.path.abspath(__file__))
     # 해당 프로젝트 파일내 json파일이 있으므로 폴더패스와 파일이름을 합쳐 json_file의 절대경로값 얻는다
@@ -26,12 +25,12 @@ def get_apikey(key_name, json_filename='secret.json'):
     # json파일이 존재하면 json파일내의 모든 key, value값을 얻는다
     with open(json_filepath) as f:
         json_p = json.loads(f.read())
-        print("json_p:  ", json_p)
+        # print("json_p:  ", json_p)
 
     try:
         # key에 해당하는 value를 얻는다 ex. json_p["Authorization"]
         value=json_p[key_name]
-        print(value)
+        # print(value)
         return value
     except KeyError:
         # 해당하는 key_name이 없는 경우이다
@@ -49,15 +48,15 @@ def getLatLng(addr):
     if(status_code != 200):
         print(f"ERROR: Unable to call rest api, http_status_coe: {status_code}")
         return 0
-    print(requests.get(url, headers=headers))
-    print(result)
+    # print(requests.get(url, headers=headers))
+    # print(result)
 
     try:
         match_first = result['documents'][0]['address']
         lon = match_first['x']
         lat = match_first['y']
-        print(lon, lat)
-        print(match_first)
+        # print(lon, lat)
+        # print(match_first)
 
         return lon, lat
     except IndexError: # match값이 없을때
@@ -96,9 +95,9 @@ def hello_world():
 
     m = Map(location=[36.5053542, 127.7043419], zoom_start=8)
 
-    print(df)
+    # print(df)
     for idx in range(len(df)):
-        print(df.loc[idx, "시설명"], df.loc[idx, "주소"])
+        # print(df.loc[idx, "시설명"], df.loc[idx, "주소"])
         location_name = df.loc[idx, "시설명"]
         addr = df.loc[idx, "주소"]
         addr_lon, addr_lat = getLatLng(addr)
@@ -111,7 +110,7 @@ def hello_world():
 if __name__ == '__main__':
     print(folium.__version__)
     host_addr = '0.0.0.0'
-    port_num = '8080'
+    port_num = '5000'
     app.run(host=host_addr, port=port_num, debug=True)
 
 
