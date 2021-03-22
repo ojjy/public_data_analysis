@@ -10,7 +10,7 @@ import os
 from pathlib import Path
 
 app = Flask(__name__)
-
+# 애초에 주소 리스트를 생성하여 주소 찍을때 이 리스트를 넘겨 한번만 콜하여 지도에 찍는 방법이 있는지 강구.
 def get_apikey(key_name, json_filename='secret.json'):
     print("get_apikey call")
     # 해당 py파일의 속해 있는 폴더가 base_dir
@@ -102,8 +102,10 @@ def hello_world():
         location_name = df.loc[idx, "시설명"]
         addr = df.loc[idx, "주소"]
         addr_lon, addr_lat = getLatLng(addr)
+        iframe = location_name+ ":<br> "+ addr
+        popup = folium.Popup(iframe, min_width=200, max_width=200)
     # 데이터내 주소를 마커형태로 지도에 찍는다
-        Marker(location=[addr_lat, addr_lon], popup="<b>"+location_name+"</b>", tooltip=location_name, icon=Icon(color='green', icon='flag')).add_to(m)
+        Marker(location=[addr_lat, addr_lon], popup=popup, tooltip=location_name, icon=Icon(color='green', icon='flag')).add_to(m)
     return m._repr_html_()
 
 if __name__ == '__main__':
