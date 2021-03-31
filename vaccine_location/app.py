@@ -38,8 +38,8 @@ def get_apikey(key_name, json_filename='secret.json'):
         return error_msg
 
 # 잘못된 주소정보를 가져와도 에러가 발생하지 않도록 try except구문을 넣어 수정필요
+# if else구문으로 에러처리 할지 try except구문으로 에러 처리 할지 성능비교 필요
 def getLatLng(addr):
-
     Authorization = get_apikey("Authorization")
     url = 'https://dapi.kakao.com/v2/local/search/address.json?query=' + addr
     headers = {"Authorization": Authorization}
