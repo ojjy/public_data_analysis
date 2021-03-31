@@ -78,7 +78,7 @@ def base():
     map = folium.Map(
         location=[36.5053542, 127.7043419]
     )
-    # 처음 csv파일을 읽을때 976으로 되어 있는데 확인해보니 카카오api에는 등록되어 있지 않는 잘못된 주소 정보로978로 수정하느 정상적으로 위도 경도 값을 가져온다.
+    # 처음 csv파일을 읽을때 976으로 되어 있는데 확인해보니 카카오api에는 등록되어 있지 않는 잘못된 주소 정보로 978로 수정하니 정상적으로 위도 경도 값을 가져온다.
     addr_lon, addr_lat = getLatLng("대전광역시 유성구 유성대로 978")
     return map._repr_html_()
 
@@ -86,8 +86,9 @@ def base():
 def hello_world():
     # db연결
     # dbcon = create_engine("mysql+pymysql://test:test@127.0.0.1/testdb")
-    # df = pd.read_csv("vacloc.csv")
-    df = pd.read_csv("vacloc_20210315.csv")
+    # df = pd.read_csv("vac.csv")
+    # df = pd.read_csv("vac210315.csv")
+    df = pd.read_csv("vac210331.csv")
     # dataframe내 데이터를 db에 넣는다 테이블이 없으면 생성하고 테이블과 데이터가 있으면 삭제하고 다시 생성
     # df.to_sql(name='vaccine_loc', con=dbcon, if_exists='replace')
     # # row갯수 만큼 for문을 돌아서 row들의 데이터를 각각 저장한다 iterrows()
