@@ -94,8 +94,11 @@ def test_location():
     lon, lat = getLatLng("대전광역시 유성구 유성대로 978")
     Marker(location=[lon, lat], popup="test location", icon=Icon(color='green', icon='flag')).add_to(map)
     return map._repr_html_()
+@app.route('/')
+def modify_check()
+    return "<h1>modified 210403</h1>"
 
-@app.route('/index')
+@app.route('/1')
 def base():
     map = folium.Map(
         location=[36.5053542, 127.7043419]
@@ -114,7 +117,6 @@ def draw_map_multiple_function_call():
     # dataframe내 데이터를 db에 넣는다 테이블이 없으면 생성하고 테이블과 데이터가 있으면 삭제하고 다시 생성
     # df.to_sql(name='vaccine_loc', con=dbcon, if_exists='replace')
     # # row갯수 만큼 for문을 돌아서 row들의 데이터를 각각 저장한다 iterrows()
-
 
     m = Map(location=[36.5053542, 127.7043419], zoom_start=8)
 
@@ -160,11 +162,7 @@ def draw_map_once_function_call():
     return m._repr_html_()
 
 
-
-
-
 if __name__ == '__main__':
-    print(folium.__version__)
     host_addr = '0.0.0.0'
     port_num = '5000'
     app.run(host=host_addr, port=port_num, debug=True)
@@ -172,5 +170,5 @@ if __name__ == '__main__':
 
 # References
 # https://www.geeksforgeeks.org/different-ways-to-iterate-over-rows-in-pandas-dataframe/
-
-# Address http://yejinjo.com:5000
+# https://www.geeksforgeeks.org/python-pandas-dataframe-loc/
+# Address http://yejinjo.com
