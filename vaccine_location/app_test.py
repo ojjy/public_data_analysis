@@ -72,9 +72,28 @@ def enumerate_test():
     for idx, addr in enumerate(addr_list):
         print(idx,"번째 주소: " ,addr)
 
+    # result = json.loads(str(requests.get(url, headers=headers).text))
+def get_test(addr):
+    # 왜 {key_name, value}를 프린트하면 {value, key_name} 일까?
+    key_name = "Authorization"
+    value = get_apikey(key_name)
+    headers = {key_name: value}
+    print(headers)
+    url = 'https://dapi.kakao.com/v2/local/search/address.json?query=' + addr
+    result = requests.get(url, headers=headers)
+    # content binary형태, json json형태, raw raw형태
+    print("content: ", json.loads(requests.get(url=url, headers=headers).text))
+
+    print(result)
+
+    # return result
+
 if __name__ == "__main__":
     # print(getLatLng("경기도 수원시 영통구 광교로 114"))
 
 
     #enumerate함수는 리스트 값을 인자로 넣어주면 인덱스와 인덱스에 해당하는 배열 데이터를 리턴해준다.
-    enumerate_test()
+    # enumerate_test()
+
+
+    get_test("경기도 수원시 영통구 광교로 114")

@@ -11,7 +11,7 @@ from pathlib import Path
 
 app = Flask(__name__)
 # 애초에 주소 리스트를 생성하여 주소 찍을때 이 리스트를 넘겨 한번만 콜하여 지도에 찍는 방법이 있는지 강구.
-def get_apikey(key_name, json_filename='secret.json'):
+def get_apikey(key_name, json_filename):
     # 해당 py파일의 속해 있는 폴더가 base_dir
     BASE_DIR = Path(__file__).resolve().parent # == os.path.dirname(os.path.abspath(__file__))
     # 해당 프로젝트 파일내 json파일이 있으므로 폴더패스와 파일이름을 합쳐 json_file의 절대경로값 얻는다
@@ -40,9 +40,9 @@ def get_apikey(key_name, json_filename='secret.json'):
 # 잘못된 주소정보를 가져와도 에러가 발생하지 않도록 try except구문을 넣어 수정필요
 # if else구문으로 에러처리 할지 try except구문으로 에러 처리 할지 성능비교 필요
 def getLatLng(addr):
-    Authorization = get_apikey("Authorization")
+    value = get_apikey(key_name="Authorization", json_filename="secret.json")
+    headers = {"Authorization": value}
     url = 'https://dapi.kakao.com/v2/local/search/address.json?query=' + addr
-    headers = {"Authorization": Authorization}
     result = json.loads(str(requests.get(url, headers=headers).text))
     status_code = requests.get(url, headers=headers).status_code
     if(status_code != 200):
@@ -64,6 +64,28 @@ def getLatLng(addr):
     except TypeError: # match값이 2개이상일때
         return 0
 
+
+def getLatLng_list(addr_list):
+    key_name = "Authorization"
+    value = get_apikey(key_name, json_filename="secret.json")
+    headers={key_name: value}
+    lon_list=[]
+    lat_list=[]
+    for idx, addr in enumerate(addr_list):
+        url = 'https://dapi.kakao.com/v2/local/search/address.json?query=' + addr
+        result = requests.get(url=url, headers=headers)
+        if(result.status_code != 200):
+            raise ValueError
+
+        # json으로 로드 하지 않으면 dict형식으로 불러올수 없다
+        addr_info = json.loads(result.text)
+        addr_info_lon = addr_info["documents"][0]['address']['x']
+        addr_info_lat = addr_info["documents"][0]['address']['y']
+        lon_list.append(addr_info_lon)
+        lat_list.append(addr_info_lat)
+
+    return lon_list, lat_list
+
 @app.route('/test')
 def test_location():
     map = folium.Map(
@@ -82,7 +104,7 @@ def base():
     addr_lon, addr_lat = getLatLng("대전광역시 유성구 유성대로 978")
     return map._repr_html_()
 
-@app.route('/')
+@app.route('/map')
 def draw_map_multiple_function_call():
     # db연결
     # dbcon = create_engine("mysql+pymysql://test:test@127.0.0.1/testdb")
@@ -108,7 +130,7 @@ def draw_map_multiple_function_call():
         Marker(location=[addr_lat, addr_lon], popup=popup, tooltip=location_name, icon=Icon(color='green', icon='flag')).add_to(m)
     return m._repr_html_()
 
-@app.route('/maps')
+@app.route('/')
 def draw_map_once_function_call():
     # db연결
     # dbcon = create_engine("mysql+pymysql://test:test@127.0.0.1/testdb")
@@ -126,15 +148,27 @@ def draw_map_once_function_call():
     for idx in range(len(df)):
         addr_list.append(df.loc[idx, "주소"])
 
-    for idx, list_idx in enumerate(addr_list):
-        print(idx, "번째 주소: ",addr_list[list_idx])
+    # 여러번 호출하지 않고 함수는 1번만 호출하고 값들은 리스트 형태로 반환한다
+    lon_list, lat_list = getLatLng_list(addr_list)
+
+    for idx, addr in enumerate(addr_list):
+        location_name=df.loc[idx, "시설명"]
+        iframe = location_name + ":<br> " + addr
+        popup = folium.Popup(iframe, min_width=200, max_width=200)
+        Marker(location=[lat_list[idx], lon_list[idx]], popup=popup, tooltip=location_name, icon=Icon(color='green', icon='flag')).add_to(m)
+
+    return m._repr_html_()
+
+
+
+
 
 if __name__ == '__main__':
-    # print(folium.__version__)
-    # host_addr = '0.0.0.0'
-    # port_num = '5000'
-    # app.run(host=host_addr, port=port_num, debug=True)
-    draw_map_once_function_call()
+    print(folium.__version__)
+    host_addr = '0.0.0.0'
+    port_num = '5000'
+    app.run(host=host_addr, port=port_num, debug=True)
+
 
 # References
 # https://www.geeksforgeeks.org/different-ways-to-iterate-over-rows-in-pandas-dataframe/
