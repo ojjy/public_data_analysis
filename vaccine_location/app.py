@@ -83,7 +83,7 @@ def base():
     return map._repr_html_()
 
 @app.route('/')
-def hello_world():
+def draw_map_multiple_function_call():
     # db연결
     # dbcon = create_engine("mysql+pymysql://test:test@127.0.0.1/testdb")
     # df = pd.read_csv("vac.csv")
@@ -108,12 +108,33 @@ def hello_world():
         Marker(location=[addr_lat, addr_lon], popup=popup, tooltip=location_name, icon=Icon(color='green', icon='flag')).add_to(m)
     return m._repr_html_()
 
-if __name__ == '__main__':
-    print(folium.__version__)
-    host_addr = '0.0.0.0'
-    port_num = '5000'
-    app.run(host=host_addr, port=port_num, debug=True)
+@app.route('/maps')
+def draw_map_once_function_call():
+    # db연결
+    # dbcon = create_engine("mysql+pymysql://test:test@127.0.0.1/testdb")
+    # df = pd.read_csv("vac.csv")
+    # df = pd.read_csv("vac210315.csv")
+    df = pd.read_csv("vac210331.csv")
+    # dataframe내 데이터를 db에 넣는다 테이블이 없으면 생성하고 테이블과 데이터가 있으면 삭제하고 다시 생성
+    # df.to_sql(name='vaccine_loc', con=dbcon, if_exists='replace')
+    # # row갯수 만큼 for문을 돌아서 row들의 데이터를 각각 저장한다 iterrows()
 
+
+    m = Map(location=[36.5053542, 127.7043419], zoom_start=8)
+
+    addr_list=[]
+    for idx in range(len(df)):
+        addr_list.append(df.loc[idx, "주소"])
+
+    for idx, list_idx in enumerate(addr_list):
+        print(idx, "번째 주소: ",addr_list[list_idx])
+
+if __name__ == '__main__':
+    # print(folium.__version__)
+    # host_addr = '0.0.0.0'
+    # port_num = '5000'
+    # app.run(host=host_addr, port=port_num, debug=True)
+    draw_map_once_function_call()
 
 # References
 # https://www.geeksforgeeks.org/different-ways-to-iterate-over-rows-in-pandas-dataframe/

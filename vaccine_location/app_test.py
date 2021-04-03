@@ -2,6 +2,8 @@ import requests
 import json
 import os
 from pathlib import Path
+import pandas as pd
+
 
 # github등 git서버에 올릴때 개인적으로 받은 api key등을 올리지 않도록 gitignore에 secret.json을 등록하고 이 키값은 json파일에 등록
 def get_apikey(key_name, json_filename='secret.json'):
@@ -58,5 +60,21 @@ def getLatLng(addr):
     except TypeError: # match값이 2개이상일때
         return 0
 
+def enumerate_test():
+    df = pd.read_csv("vac.csv")
+
+    addr_list=[]
+
+    for df_idx in range(len(df)):
+        addr = df.loc[df_idx, "주소"]
+        addr_list.append(addr)
+
+    for idx, addr in enumerate(addr_list):
+        print(idx,"번째 주소: " ,addr)
+
 if __name__ == "__main__":
-    print(getLatLng("경기도 수원시 영통구 광교로 114"))
+    # print(getLatLng("경기도 수원시 영통구 광교로 114"))
+
+
+    #enumerate함수는 리스트 값을 인자로 넣어주면 인덱스와 인덱스에 해당하는 배열 데이터를 리턴해준다.
+    enumerate_test()
