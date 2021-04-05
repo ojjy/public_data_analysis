@@ -15,7 +15,6 @@ def get_apikey(key_name, json_filename='secret.json'):
 
     # json_file이 존재하지 않으면 error 발생
     if(not os.path.isfile(json_filepath)):
-        print("JSON File Not Found")
         raise FileNotFoundError
 
     # json파일이 존재하면 json파일내의 모든 key, value값을 얻는다
