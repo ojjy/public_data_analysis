@@ -95,4 +95,4 @@ if __name__ == "__main__":
     # enumerate_test()
 
 
-    get_test("경기도 수원시 영통구 광교로 114")
+    get_test("전남 광양시 봉강면 매천로 695-20")

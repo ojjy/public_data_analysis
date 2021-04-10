@@ -65,6 +65,16 @@ def getLatLng(addr):
         return 0
 
 
+def check_error_addr():
+    df = pd.read_csv("vac210407.csv")
+    addr_list=[]
+    for idx in range(len(df)):
+        print(idx)
+        addr_list.append(df.loc[idx, "주소"])
+
+    addr_lon_list, addr_lat_list = getLatLng_list(addr_list)
+
+
 def getLatLng_list(addr_list):
     key_name = "Authorization"
     value = get_apikey(key_name, json_filename="secret.json")
@@ -79,10 +89,19 @@ def getLatLng_list(addr_list):
 
         # json으로 로드 하지 않으면 dict형식으로 불러올수 없다
         addr_info = json.loads(result.text)
-        addr_info_lon = addr_info["documents"][0]['address']['x']
-        addr_info_lat = addr_info["documents"][0]['address']['y']
-        lon_list.append(addr_info_lon)
-        lat_list.append(addr_info_lat)
+        try:
+            addr_info_lon = addr_info["documents"][0]['address']['x']
+            addr_info_lat = addr_info["documents"][0]['address']['y']
+            lon_list.append(addr_info_lon)
+            lat_list.append(addr_info_lat)
+            print(idx, addr)
+
+        except IndexError:  # match값이 없을때
+            print(addr)
+            raise IndexError
+        except TypeError:  # match값이 2개이상일때
+            print(addr)
+            raise TypeError
 
     return lon_list, lat_list
 
@@ -95,7 +114,7 @@ def test_location():
     Marker(location=[lon, lat], popup="test location", icon=Icon(color='green', icon='flag')).add_to(map)
     return map._repr_html_()
 @app.route('/')
-def modify_check()
+def modify_check():
     return "<h1>modified 210403</h1>"
 
 @app.route('/1')
@@ -163,12 +182,17 @@ def draw_map_once_function_call():
 
 
 if __name__ == '__main__':
-    host_addr = '0.0.0.0'
-    port_num = '5000'
-    app.run(host=host_addr, port=port_num, debug=True)
+    # host_addr = '0.0.0.0'
+    # port_num = '5000'
+    # app.run(host=host_addr, port=port_num, debug=True)
+    check_error_addr()
 
 
 # References
 # https://www.geeksforgeeks.org/different-ways-to-iterate-over-rows-in-pandas-dataframe/
 # https://www.geeksforgeeks.org/python-pandas-dataframe-loc/
 # Address http://yejinjo.com
+
+# csv파일내 주소 변경 사항
+# 10,지역,코로나19 대전광역시 유성구 예방접종센터,,유성종합스포츠센터,34128,대전광역시 유성구 유성대로 976 => 978
+# 63,지역,코로나19 전라남도 광양시 예방접종센터 ,,광양실내체육관,57728,전남 광양시 봉강면 매천로 695-20 => 광양읍
