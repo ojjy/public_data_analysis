@@ -60,7 +60,7 @@ def getLatLng(addr):
         return 0
 
 def enumerate_test():
-    df = pd.read_csv("vac.csv")
+    df = pd.read_csv("csv/vac.csv")
 
     addr_list=[]
 

@@ -60,20 +60,23 @@ def getLatLng(addr):
 
         return lon, lat
     except IndexError: # match값이 없을때
-        return 0
+        print("IndexError발생, 해당 주소에 맞는 위도 경도 없음, 주소정보: ", addr)
+        raise IndexError
     except TypeError: # match값이 2개이상일때
-        return 0
+        print("TypeError발생, 해당 주소에 맞는 위도 경도값 2개 이상, 주소정보: ", addr)
+        raise TypeError
 
 
 def check_error_addr():
-    df = pd.read_csv("vac210407.csv")
+    """
+    주소에러 체크 csv 파일 내 올바른 위도경도 값을 찾을수 있도록 지도로 찍기전 getLanLat함수를 호출하여 오류 검사를 한다.
+    :return:
+    """
+    df = pd.read_csv("csv/vac210407.csv")
     addr_list=[]
     for idx in range(len(df)):
-        print(idx)
         addr_list.append(df.loc[idx, "주소"])
-
     addr_lon_list, addr_lat_list = getLatLng_list(addr_list)
-
 
 def getLatLng_list(addr_list):
     key_name = "Authorization"
@@ -94,13 +97,12 @@ def getLatLng_list(addr_list):
             addr_info_lat = addr_info["documents"][0]['address']['y']
             lon_list.append(addr_info_lon)
             lat_list.append(addr_info_lat)
-            print(idx, addr)
 
         except IndexError:  # match값이 없을때
-            print(addr)
+            print("IndexError발생, 해당 주소에 맞는 위도 경도 없음, idx: ",idx, "번째, 주소정보: ", addr)
             raise IndexError
         except TypeError:  # match값이 2개이상일때
-            print(addr)
+            print("TypeError발생, 해당 주소에 맞는 위도 경도값 2개 이상, idx: ",idx, "번째, 주소정보: ", addr)
             raise TypeError
 
     return lon_list, lat_list
@@ -113,7 +115,7 @@ def test_location():
     lon, lat = getLatLng("대전광역시 유성구 유성대로 978")
     Marker(location=[lon, lat], popup="test location", icon=Icon(color='green', icon='flag')).add_to(map)
     return map._repr_html_()
-@app.route('/')
+@app.route('/2')
 def modify_check():
     return "<h1>modified 210403</h1>"
 
@@ -132,7 +134,7 @@ def draw_map_multiple_function_call():
     # dbcon = create_engine("mysql+pymysql://test:test@127.0.0.1/testdb")
     # df = pd.read_csv("vac.csv")
     # df = pd.read_csv("vac210315.csv")
-    df = pd.read_csv("vac210331.csv")
+    df = pd.read_csv("csv/vac210407.csv")
     # dataframe내 데이터를 db에 넣는다 테이블이 없으면 생성하고 테이블과 데이터가 있으면 삭제하고 다시 생성
     # df.to_sql(name='vaccine_loc', con=dbcon, if_exists='replace')
     # # row갯수 만큼 for문을 돌아서 row들의 데이터를 각각 저장한다 iterrows()
@@ -157,7 +159,7 @@ def draw_map_once_function_call():
     # dbcon = create_engine("mysql+pymysql://test:test@127.0.0.1/testdb")
     # df = pd.read_csv("vac.csv")
     # df = pd.read_csv("vac210315.csv")
-    df = pd.read_csv("vac210331.csv")
+    df = pd.read_csv("csv/vac210331.csv")
     # dataframe내 데이터를 db에 넣는다 테이블이 없으면 생성하고 테이블과 데이터가 있으면 삭제하고 다시 생성
     # df.to_sql(name='vaccine_loc', con=dbcon, if_exists='replace')
     # # row갯수 만큼 for문을 돌아서 row들의 데이터를 각각 저장한다 iterrows()
@@ -177,15 +179,21 @@ def draw_map_once_function_call():
         iframe = location_name + ":<br> " + addr
         popup = folium.Popup(iframe, min_width=200, max_width=200)
         Marker(location=[lat_list[idx], lon_list[idx]], popup=popup, tooltip=location_name, icon=Icon(color='green', icon='flag')).add_to(m)
-
-    return m._repr_html_()
+    account_info=get_apikey("Account","secret.json")
+    return render_template(template_name_or_list="index.html",
+                           map=m._repr_html_(),
+                           account_info=account_info)
 
 
 if __name__ == '__main__':
-    # host_addr = '0.0.0.0'
-    # port_num = '5000'
-    # app.run(host=host_addr, port=port_num, debug=True)
+    # csv파일이 바뀌면 flask서버를 돌리기전 주소체크만 먼저 하고 주소의 오류가 없는지 먼저 검사한다.
     check_error_addr()
+
+    #csv파일내 오류가 없으면 즉 모두 정확한 위도 경도 값 가지고 올수 있으면 flask서버 실행
+    host_addr = '0.0.0.0'
+    port_num = '5000'
+    app.run(host=host_addr, port=port_num, debug=True)
+
 
 
 # References
@@ -195,4 +203,4 @@ if __name__ == '__main__':
 
 # csv파일내 주소 변경 사항
 # 10,지역,코로나19 대전광역시 유성구 예방접종센터,,유성종합스포츠센터,34128,대전광역시 유성구 유성대로 976 => 978
-# 63,지역,코로나19 전라남도 광양시 예방접종센터 ,,광양실내체육관,57728,전남 광양시 봉강면 매천로 695-20 => 광양읍
+# 63,지역,코로나19 전라남도 광양시 예방접종센터 ,,광양실내체육관,57728,전남 광양시 봉강면 매천 695-20 => 광양읍
