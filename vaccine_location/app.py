@@ -67,16 +67,35 @@ def getLatLng(addr):
         raise TypeError
 
 
-def check_error_addr():
+def renew_data():
+    """
+    csv 파일이 업데이트 되면 호출하는 함수로 csv파일 체크 하고 table에 csv데이터를 넣는다.
+    :return:
+    """
+    df = pd.read_csv("csv/vac210407.csv")
+    check_error_addr(df)
+    update_tables(df)
+    print("PASS")
+    return "PASS"
+
+def check_error_addr(df):
     """
     주소에러 체크 csv 파일 내 올바른 위도경도 값을 찾을수 있도록 지도로 찍기전 getLanLat함수를 호출하여 오류 검사를 한다.
     :return:
     """
-    df = pd.read_csv("csv/vac210407.csv")
+
     addr_list=[]
     for idx in range(len(df)):
         addr_list.append(df.loc[idx, "주소"])
     addr_lon_list, addr_lat_list = getLatLng_list(addr_list)
+    print("Pass")
+    return "Pass"
+
+def update_tables(df):
+    dbcon = create_engine("mysql+pymysql://test:test@127.0.0.1/testdb")
+    # dataframe내 데이터를 db에 넣는다 테이블이 없으면 생성하고 테이블과 데이터가 있으면 삭제하고 다시 생성
+    df.to_sql(name='vaccine_loc', con=dbcon, if_exists='replace')
+
 
 def getLatLng_list(addr_list):
     key_name = "Authorization"
@@ -189,10 +208,10 @@ if __name__ == '__main__':
     # csv파일이 바뀌면 flask서버를 돌리기전 주소체크만 먼저 하고 주소의 오류가 없는지 먼저 검사한다.
     check_error_addr()
 
-    #csv파일내 오류가 없으면 즉 모두 정확한 위도 경도 값 가지고 올수 있으면 flask서버 실행
-    host_addr = '0.0.0.0'
-    port_num = '5000'
-    app.run(host=host_addr, port=port_num, debug=True)
+    # #csv파일내 오류가 없으면 즉 모두 정확한 위도 경도 값 가지고 올수 있으면 flask서버 실행
+    # host_addr = '0.0.0.0'
+    # port_num = '5000'
+    # app.run(host=host_addr, port=port_num, debug=True)
 
 
 
