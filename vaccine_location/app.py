@@ -206,7 +206,7 @@ def draw_map_once_function_call():
 
 if __name__ == '__main__':
     # csv파일이 바뀌면 flask서버를 돌리기전 주소체크만 먼저 하고 주소의 오류가 없는지 먼저 검사한다.
-    check_error_addr()
+    renew_data()
 
     # #csv파일내 오류가 없으면 즉 모두 정확한 위도 경도 값 가지고 올수 있으면 flask서버 실행
     # host_addr = '0.0.0.0'
