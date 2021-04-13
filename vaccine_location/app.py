@@ -172,6 +172,8 @@ def draw_map_multiple_function_call():
         Marker(location=[addr_lat, addr_lon], popup=popup, tooltip=location_name, icon=Icon(color='green', icon='flag')).add_to(m)
     return m._repr_html_()
 
+
+# 홈페이지에 들어갈때마다 파일을 열고 api를 호출하지 않고 처음 세팅할때 호출하여 db에 위도경도값을 저장하고 링크를 들어가면 db에서 읽는 방식도 강구 필요
 @app.route('/')
 def draw_map_once_function_call():
     # db연결
