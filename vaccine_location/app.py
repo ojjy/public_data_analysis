@@ -30,17 +30,24 @@ def get_apikey(key_name, json_filename):
     try:
         # key에 해당하는 value를 얻는다 ex. json_p["Authorization"]
         value=json_p[key_name]
-        # print(value)
         return value
     except KeyError:
         # 해당하는 key_name이 없는 경우이다
         error_msg = "ERROR: Unvalid Key"
         return error_msg
 
+
+def getVacStat():
+    value=get_apikey(key_name="VACCINE_Authorization", json_filename="secret.json")
+    header = {"Authorization":value}
+    url = "https://api.odcloud.kr/api/15077756/v1/vaccine-stat?page=90&perPage=7&serviceKey=pC39hvcQg6mW%2Bozlig8RxFoR40NkT%2FymzBYy8P9Sze7qQdWhzWISUXn2hIGSEB9d1XAOYy1IDb2U0VmkeVyRuQ%3D%3D"
+    result = json.loads(str(requests.get(url).text))
+    print(result)
 # 잘못된 주소정보를 가져와도 에러가 발생하지 않도록 try except구문을 넣어 수정필요
 # if else구문으로 에러처리 할지 try except구문으로 에러 처리 할지 성능비교 필요
+
 def getLatLng(addr):
-    value = get_apikey(key_name="Authorization", json_filename="secret.json")
+    value = get_apikey(key_name="KAKAO_Authorization", json_filename="secret.json")
     headers = {"Authorization": value}
     url = 'https://dapi.kakao.com/v2/local/search/address.json?query=' + addr
     result = json.loads(str(requests.get(url, headers=headers).text))
@@ -96,7 +103,6 @@ def update_tables(df):
     # dataframe내 데이터를 db에 넣는다 테이블이 없으면 생성하고 테이블과 데이터가 있으면 삭제하고 다시 생성
     df.to_sql(name='vaccine_loc', con=dbcon, if_exists='replace')
 
-
 def getLatLng_list(addr_list):
     key_name = "Authorization"
     value = get_apikey(key_name, json_filename="secret.json")
@@ -134,6 +140,7 @@ def test_location():
     lon, lat = getLatLng("대전광역시 유성구 유성대로 978")
     Marker(location=[lon, lat], popup="test location", icon=Icon(color='green', icon='flag')).add_to(map)
     return map._repr_html_()
+
 @app.route('/2')
 def modify_check():
     return "<h1>modified 210403</h1>"
@@ -208,8 +215,8 @@ def draw_map_once_function_call():
 
 if __name__ == '__main__':
     # csv파일이 바뀌면 flask서버를 돌리기전 주소체크만 먼저 하고 주소의 오류가 없는지 먼저 검사한다.
-    renew_data()
-
+    # renew_data()
+    getVacStat()
     # #csv파일내 오류가 없으면 즉 모두 정확한 위도 경도 값 가지고 올수 있으면 flask서버 실행
     # host_addr = '0.0.0.0'
     # port_num = '5000'
