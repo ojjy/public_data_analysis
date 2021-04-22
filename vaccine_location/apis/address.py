@@ -2,6 +2,27 @@ from get_key import get_apikey
 import json
 import requests
 
+def getlatlng_naver(addr_list):
+    lon_list=[]
+    lat_list=[]
+    jsonp=get_dict('X-NCP-APIGW-API-KEY-ID', 'X-NCP-APIGW-API-KEY', json_file='secret.json')
+    headers = {'X-NCP-APIGW-API-KEY-ID':jsonp['X-NCP-APIGW-API-KEY-ID'],
+               'X-NCP-APIGW-API-KEY':jsonp['X-NCP-APIGW-API-KEY']}
+    for idx, addr in enumerate(addr_list):
+        url = 'https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query='+addr
+        result = json.loads(str(requests.get(url=url, headers=headers).text))
+        try:
+            addr_info_lon = result['addresses'][0]['x']
+            addr_info_lat = result['addresses'][0]['y']
+            lon_list.append(addr_info_lon)
+            lat_list.append(addr_info_lat)
+        except IndexError:  # match값이 없을때
+            print("IndexError발생, 해당 주소에 맞는 위도 경도 없음, idx: ",idx, "번째, 주소정보: ", addr)
+            raise IndexError
+        except TypeError:  # match값이 2개이상일때
+            print("TypeError발생, 해당 주소에 맞는 위도 경도값 2개 이상, idx: ",idx, "번째, 주소정보: ", addr)
+            raise TypeError
+    return lon_list, lat_list
 
 def getLatLng(addr):
     value = get_apikey(key_name="KAKAO_Authorization", json_filename="secret.json")
