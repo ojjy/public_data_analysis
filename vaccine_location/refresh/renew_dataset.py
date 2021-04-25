@@ -2,6 +2,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 import pymysql
 from apis.address import getLatLng_list
+from apis.get_key import get_apikey
 
 def renew_data():
     df = pd.read_csv("csv/vac210414.csv")
@@ -48,4 +49,7 @@ def write_csv():
     conn = pymysql.connect(host='127.0.0.1', user='yejinjoc_test', password='yejinjoc_test', database='yejinjoc_testdb')
     sql_query = pd.read_sql_query('''select * from vaccine_center''', conn)
     df = pd.DataFrame(sql_query)
-    df.to_csv("test.csv", index=False)
+    df.to_csv("csv/test.csv", index=False)
+
+if __name__ == "__main__":
+    write_csv()

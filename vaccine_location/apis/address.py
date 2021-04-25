@@ -1,7 +1,6 @@
-from get_key import get_apikey
 import json
 import requests
-
+from apis.get_key import get_apikey
 
 def getLatLng(addr):
     value = get_apikey(key_name="KAKAO_Authorization", json_filename="secret.json")
