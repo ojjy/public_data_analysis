@@ -3,12 +3,13 @@ import requests
 from apis.get_key import get_apikey
 
 
-def getlatlng_naver(addr_list):
+def getlatlng_list_naver(addr_list):
     lon_list=[]
     lat_list=[]
-    jsonp=get_dict('X-NCP-APIGW-API-KEY-ID', 'X-NCP-APIGW-API-KEY', json_file='secret.json')
-    headers = {'X-NCP-APIGW-API-KEY-ID':jsonp['X-NCP-APIGW-API-KEY-ID'],
-               'X-NCP-APIGW-API-KEY':jsonp['X-NCP-APIGW-API-KEY']}
+    key_id = get_apikey('X-NCP-APIGW-API-KEY-ID', json_filename="secret.json")
+    key = get_apikey('X-NCP-APIGW-API-KEY', json_filename="secret.json")
+    headers = {'X-NCP-APIGW-API-KEY-ID':key_id,
+               'X-NCP-APIGW-API-KEY':key}
     for idx, addr in enumerate(addr_list):
         url = 'https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query='+addr
         result = json.loads(str(requests.get(url=url, headers=headers).text))
@@ -81,3 +82,6 @@ def getLatLng_list(addr_list):
             raise TypeError
 
     return lon_list, lat_list
+
+if __name__ == "__main__":
+    print(getlatlng_naver(["경기도 수원시 영통구 광교로 114"]))

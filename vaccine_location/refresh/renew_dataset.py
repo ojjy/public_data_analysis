@@ -1,12 +1,12 @@
 import pandas as pd
 from sqlalchemy import create_engine
 import pymysql
-from apis.address import getLatLng_list
+from apis.address import getlatlng_list_naver
 from apis.get_key import get_apikey
 
 def renew_data():
-    df = pd.read_csv("csv/vac210414.csv")
-    # check_error_addr(df)
+    df = pd.read_csv("../csv/vac210421.csv")
+    check_error_addr(df)
     update_tables(df)
     write_csv()
     print("PASS")
@@ -17,7 +17,7 @@ def check_error_addr(df):
     addr_list=[]
     for idx in range(len(df)):
         addr_list.append(df.loc[idx, "address"])
-    addr_lon_list, addr_lat_list = getLatLng_list(addr_list)
+    addr_lon_list, addr_lat_list = getlatlng_list_naver(addr_list)
     print("Pass")
     return addr_list, addr_lon_list, addr_lat_list
 
@@ -49,7 +49,7 @@ def write_csv():
     conn = pymysql.connect(host='127.0.0.1', user='yejinjoc_test', password='yejinjoc_test', database='yejinjoc_testdb')
     sql_query = pd.read_sql_query('''select * from vaccine_center''', conn)
     df = pd.DataFrame(sql_query)
-    df.to_csv("csv/test.csv", index=False)
+    df.to_csv("../csv/test.csv", index=False)
 
 if __name__ == "__main__":
-    write_csv()
+    renew_data()

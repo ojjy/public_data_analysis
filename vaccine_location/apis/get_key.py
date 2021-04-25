@@ -4,9 +4,9 @@ import json
 
 
 def get_apikey(key_name, json_filename):
-    BASE_DIR = Path(__file__).resolve().parent # == os.path.dirname(os.path.abspath(__file__))
+    BASE_DIR = Path(__file__).resolve().parent.parent # == os.path.dirname(os.path.abspath(__file__))
     json_filepath = os.path.join(BASE_DIR, json_filename)
-
+    # print(json_filepath)
     if(not os.path.isfile(json_filepath)):
         print("JSON File Not Found")
         raise FileNotFoundError
