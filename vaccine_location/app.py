@@ -8,7 +8,7 @@ from apis.get_key import get_apikey
 from apis.address import getLatLng
 
 app = Flask(__name__)
-
+# 지도 cluster필요
 @app.route('/test')
 def test_location():
     map = folium.Map(
