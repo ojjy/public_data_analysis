@@ -8,7 +8,6 @@ from apis.get_key import get_apikey
 from apis.address import getLatLng
 
 app = Flask(__name__)
-# 지도 cluster필요
 @app.route('/test')
 def test_location():
     map = folium.Map(
@@ -30,6 +29,7 @@ def base():
     addr_lon, addr_lat = getLatLng("대전광역시 유성구 유성대로 978")
     return map._repr_html_()
 
+# cluster기능 추가
 @app.route('/map')
 def draw_map_multiple_function_call():
     # db연결
