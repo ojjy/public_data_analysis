@@ -3,9 +3,9 @@ import pandas as pd
 from sqlalchemy import create_engine
 from folium import Map, Marker, Icon
 import folium
-from folium.plugin import MarkerCluster
 from apis.get_key import get_apikey
 from apis.address import getLatLng
+from folium.plugins import MarkerCluster
 
 app = Flask(__name__)
 @app.route('/test')
@@ -62,7 +62,7 @@ def draw_map_once_function_call():
     df = pd.read_csv("csv/test.csv")
 
     m = Map(location=[36.5053542, 127.7043419], zoom_start=8)
-
+    marker_cluster = MarkerCluster().add_to(m)
     addr_list=[]
     for idx in range(len(df)):
         addr_list.append(df.loc[idx, "address"])
@@ -76,7 +76,7 @@ def draw_map_once_function_call():
         longitude = df.loc[idx, "longitude"]
         iframe = location_name + ":<br> " + addr
         popup = folium.Popup(iframe, min_width=200, max_width=200)
-        Marker(location=[latitude, longitude], popup=popup, tooltip=location_name, icon=Icon(color='green', icon='flag')).add_to(m)
+        Marker(location=[latitude, longitude], popup=popup, tooltip=location_name, icon=Icon(color='green', icon='flag')).add_to(marker_cluster)
     account_info=get_apikey("Account","secret.json")
     return render_template(template_name_or_list="index.html",
                            map=m._repr_html_(),
