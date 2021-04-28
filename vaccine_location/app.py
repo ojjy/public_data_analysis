@@ -3,7 +3,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from folium import Map, Marker, Icon
 import folium
-
+from folium.plugin import MarkerCluster
 from apis.get_key import get_apikey
 from apis.address import getLatLng
 
