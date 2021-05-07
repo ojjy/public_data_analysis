@@ -5,7 +5,7 @@ from apis.address import getlatlng_list_naver
 from apis.get_key import get_apikey
 
 def renew_data():
-    df = pd.read_csv("../csv/vac210429.csv")
+    df = pd.read_csv("../csv/vac210506.csv")
     check_error_addr(df)
     update_tables(df)
     write_csv()
