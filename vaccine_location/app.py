@@ -72,6 +72,8 @@ def draw_map_once_function_call():
 
     for idx, addr in enumerate(addr_list):
         location_name=df.loc[idx, "location_name"]
+        telephone = df.loc[idx, "telephone"]
+        print(telephone)
         latitude = df.loc[idx, "latitude"]
         longitude = df.loc[idx, "longitude"]
         iframe = location_name + ":<br> " + addr
