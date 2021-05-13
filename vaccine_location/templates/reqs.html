@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block title %}The Covid19 Vaccine Map in Republic of Korea{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    .important { color: #336699; }
+  </style>
+{% endblock %}
+{% block content %}
+  <h1>코로나 백신 지도</h1>
+    Pfizer같은 mRNA백신을 보관하고 맞을수 있는 예방접종센터 지도 서비스
+  <p class="important">
+    {{ map|safe }}
+{% endblock %}

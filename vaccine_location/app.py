@@ -6,6 +6,8 @@ import folium
 from apis.get_key import get_apikey
 from apis.address import getLatLng
 from folium.plugins import MarkerCluster
+import json
+import requests
 
 app = Flask(__name__)
 @app.route('/test')
@@ -86,12 +88,32 @@ def draw_map_once_function_call():
                            account_info=account_info)
 
 
-if __name__ == '__main__':
+@app.route("/reqs")
+def map_api_call():
+    url = "https://api.odcloud.kr/api/15077586/v1/centers?page=1&perPage=300&serviceKey=" + get_apikey("serviceKey", "secret.json")
 
+    result = requests.get(url=url)
+    json_result = json.loads(str(result.text))
+
+    m = Map(location=[36.5053542, 127.7043419], zoom_start=8)
+    marker_cluster = MarkerCluster().add_to(m)
+
+    for idx in range(json_result["currentCount"]):
+        address = json_result["data"][idx]["address"]
+        centerName = json_result["data"][idx]["centerName"]
+        facilityName = json_result["data"][idx]["facilityName"]
+        lat = json_result["data"][idx]["lat"]
+        lng = json_result["data"][idx]["lng"]
+        iframe = centerName + ": <br> " + facilityName + ":<br> " + address
+        popup = folium.Popup(iframe, min_width=200, max_width=200)
+        Marker(location=[lat, lng], popup=popup, tooltip=centerName+" : "+facilityName, icon=Icon(color='green', icon='flag')).add_to(marker_cluster)
+    account_info=get_apikey("Account","secret.json")
+    return render_template(template_name_or_list="reqs.html",  map=m._repr_html_(), account_info=account_info)
+
+if __name__ == '__main__':
     host_addr = '0.0.0.0'
     port_num = '5000'
     app.run(host=host_addr, port=port_num, debug=True)
-
 
 
 # References
