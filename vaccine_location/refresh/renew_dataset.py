@@ -6,6 +6,7 @@ from apis.get_key import get_apikey
 
 def renew_data():
     df = pd.read_csv("../csv/vac210512.csv")
+    df.fillna("None")
     check_error_addr(df)
     update_tables(df)
     write_csv()

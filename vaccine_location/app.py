@@ -76,7 +76,8 @@ def draw_map_once_function_call():
         print(telephone)
         latitude = df.loc[idx, "latitude"]
         longitude = df.loc[idx, "longitude"]
-        iframe = location_name + ":<br> " + addr
+        iframe = location_name + ":<br> " + addr + ": <br> " + telephone
+        print(idx, ": ", iframe)
         popup = folium.Popup(iframe, min_width=200, max_width=200)
         Marker(location=[latitude, longitude], popup=popup, tooltip=location_name, icon=Icon(color='green', icon='flag')).add_to(marker_cluster)
     account_info=get_apikey("Account","secret.json")
@@ -103,3 +104,4 @@ if __name__ == '__main__':
 # csv파일내 주소 변경 사항
 # 10,지역,코로나19 대전광역시 유성구 예방접종센터,,유성종합스포츠센터,34128,대전광역시 유성구 유성대로 976 => 978
 # 63,지역,코로나19 전라남도 광양시 예방접종센터 ,,광양실내체육관,57728,전남 광양시 봉강면 매천 695-20 => 광양읍
+# 136,지역,코로나19 충청남도 당진시 예방접종센터,,송악문화스포츠센터,31732,충청남도 당진시 송악읍 틀모시로 830,041-360-6120
