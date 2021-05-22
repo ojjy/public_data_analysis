@@ -4,18 +4,6 @@ import json
 import folium
 from folium import Map, Marker, Icon
 from folium.plugins import MarkerCluster
-# app = Flask(__name__)
-# serviceKey="pC39hvcQg6mW%2Bozlig8RxFoR40NkT%2FymzBYy8P9Sze7qQdWhzWISUXn2hIGSEB9d1XAOYy1IDb2U0VmkeVyRuQ%3D%3D"
-# url = "https://api.odcloud.kr/api/15077586/v1/centers?page=1&perPage=300&serviceKey="+serviceKey
-#
-# result = requests.get(url=url)
-# json_result = json.loads(str(result.text))
-#
-# for idx in range(json_result["currentCount"]):
-#     print(json_result["data"][idx]["address"])
-#
-# with open("result.json", "w", encoding='utf-8') as fp:
-#     json.dump(json_result, fp, ensure_ascii=False)
 
 # @app.route("/")
 def map_api_call():
