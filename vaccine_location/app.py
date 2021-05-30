@@ -87,7 +87,7 @@ def draw_map_once_function_call():
                            map=m._repr_html_(),
                            account_info=account_info)
 
-
+# csv파일이 아닌 api호출을 통해 정보 get
 @app.route("/reqs")
 def map_api_call():
     url = "https://api.odcloud.kr/api/15077586/v1/centers?page=1&perPage=300&serviceKey=" + get_apikey("serviceKey", "secret.json")
